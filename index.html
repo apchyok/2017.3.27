@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        li{
+            list-style: none;
+        }
+        img{
+            vertical-align: middle;
+        }
+        .all{
+            width: 500px;
+            height: 200px;
+            margin: 200px auto;
+            border: 1px solid #ccc;
+            padding: 5px;
+
+        }
+        .screen{
+            width: 500px;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        .screen ul{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 3000px;
+
+        }
+        .screen ul li{
+            width: 500px;
+            height: 200px;
+            float: left;
+        }
+        .all ol{
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+        }
+        .all ol li.current{ background:yellow;}
+        .all ol li{
+            float: left;
+            width: 20px;
+            height: 20px;
+            border: 1px solid red;
+            margin: 0 5px;
+            border-radius: 10px;
+            line-height: 20px;
+            text-align: center;
+            color: #000;
+            cursor: pointer;
+        }
+        .arr{
+            display: none;
+        }
+        #left,#right{
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: #000;
+            font-size: 30px;
+            opacity: 0.3;
+            color: #fff;
+            text-align: center;
+            line-height: 40px;
+            top: 50%;
+            left: 10px;
+            margin-top: -20px;
+            cursor: pointer;
+        }
+        #right{
+            right: 10px;
+            left: auto;
+        }
+    </style>
+    <script>
+        window.onload=function () {
+            var all=document.getElementById("all")
+            var screen=document.getElementById("screen")
+            var ul=screen.children[0];
+            var ol=screen.children[1];
+            var arr=screen.children[2];
+            var imgWidth=screen.offsetWidth;
+
+            var newLi=ul.children[0].cloneNode(true)
+            ul.appendChild(newLi);
+            for (var i=0;i<ul.children.length-1;i++){
+                var newOlLi=document.createElement("li");
+                newOlLi.innerHTML=i+1;
+                ol.appendChild(newOlLi)
+            }
+            var olLiArr=ol.children;
+            olLiArr[0].className="current";
+            for (var i=0;i<olLiArr.length;i++){
+                olLiArr[i].index=i;
+                olLiArr[i].onmouseover=function () {
+                    for (var j=0;j<olLiArr.length;j++){
+                        olLiArr[j].className="";
+                    }
+                    this.className="current"
+                    key=squer=this.index;
+                    animate(ul,-this.index*imgWidth)
+                }
+            }
+            var timer=setInterval(autoPlay,1000);
+            var key=0;
+            var squer=0;
+            function autoPlay() {
+                key++;
+                if (key>olLiArr.length){
+                    ul.style.left=0;
+                    key=1;
+                }
+                animate(ul,-key*imgWidth)
+                squer++;
+                if (squer>olLiArr.length-1){
+                    squer=0;
+                }
+                for (var i=0;i<olLiArr.length;i++){
+                    olLiArr[i].className="";
+                }
+                olLiArr[squer].className="current";
+            }
+
+
+            all.onmouseover=function () {
+                arr.style.display="block";
+                clearInterval(timer)
+            }
+            all.onmouseout=function () {
+                arr.style.display="none";
+               timer=setInterval(autoPlay,1000)
+            }
+            arr[0].onclick=function () {
+                key--;
+                if (key<0){
+                    ul.style.left=-imgWidth*(olLiArr.length)+"px";
+                    key=olLiArr.length-1;
+                }
+                animate(ul,-key*imgWidth)
+                squer--;
+                if (squer<0){
+                    squer=olLiArr.length-1;
+                }
+                for (var i=0;i<olLiArr.length;i++){
+                    olLiArr[i].className="";
+                }
+                olLiArr[squer].className="current";
+            }
+            arr[1].onclick=function () {
+                autoPlay();
+            }
+
+
+            function animate(ele,target) {
+                clearInterval(ele.timer)
+                var speed=target>ele.offsetLeft?10:-10;
+                ele.timer=setInterval(function () {
+                    var val=target-ele.offsetLeft;
+                    ele.style.left=ele.offsetLeft+speed+"px";
+                    if (Math.abs(val)<=Math.abs(speed)){
+                        ele.style.left=target+"px";
+                        clearInterval(ele.timer)
+                    }
+                },10)
+            }
+
+        }
+    </script>
+</head>
+<body>
+    <div class="all" id="all">
+        <div class="screen" id="screen">
+            <ul>
+                <li><img src="../带有定时器的无缝轮播图/img/1.jpg" alt=""></li>
+                <li><img src="../带有定时器的无缝轮播图/img/2.jpg" alt=""></li>
+                <li><img src="../带有定时器的无缝轮播图/img/3.jpg" alt=""></li>
+                <li><img src="../带有定时器的无缝轮播图/img/4.jpg" alt=""></li>
+                <li><img src="../带有定时器的无缝轮播图/img/5.jpg" alt=""></li>
+            </ul>
+            <ol>
+                <!--<li>1</li>-->
+                <!--<li>2</li>-->
+                <!--<li>3</li>-->
+                <!--<li>4</li>-->
+                <!--<li>5</li>-->
+            </ol>
+            <div class="arr">
+                <span id="left"><</span>
+                <span id="right">></span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
